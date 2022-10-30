@@ -1,3 +1,4 @@
+#Simple program to create colors pallete and seve it to txt file
 from textwrap import fill
 import tkinter
 from tkinter import ANCHOR, BOTH, RIGHT, IntVar, DISABLED, filedialog
