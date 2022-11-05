@@ -1,4 +1,5 @@
 #Simple program to create colors pallete and seve it to txt file
+#Color Theme Maker
 from textwrap import fill
 import tkinter
 from tkinter import ANCHOR, BOTH, RIGHT, IntVar, DISABLED, filedialog
@@ -11,29 +12,43 @@ root.iconbitmap("color_wheel.ico")
 root.geometry("450x500")
 root.resizable(0,0)
 
+#Define fonts and colors
+#NONE: Using system defaults
+
+
 # Define functions
-
 def get_red(slider_value):
-
+"""Turn current slider value for red into a hex value and update color.
+    18 The scale value is passed automatically when the scale is moved calling the get_red 
+    function."""
     global red_value
+    #Turn the slider value into an int and hex value. Strip leading chars so only two remain
     red_value = hex(int(slider_value))
     red_value = red_value.lstrip("0x")
+    #If hex value is single digit, lead with a 0 such that d becomes 0d
     while len(red_value) < 2:
         red_value = "0" + str(red_value)
     update_color()
 
 def get_green(slider_value):
-
+    """Turn current slider value for green into a hex value and update color.
+    34 The scale value is passed automatically when the scale is moved calling the 
+    get_green function."""
     global green_value
+    #Turn the slider value into an int and hex value. Strip leading chars so only two remain
     green_value = hex(int(slider_value))
     green_value = green_value.lstrip("0x")
+    #If hex value is single digit, lead with a 0 such that d becomes 0d
     while len(green_value) < 2:
         green_value = "0" + str(green_value)
     update_color()
 
 def get_blue(slider_value):
-
+    """Turn current slider value for blue into a hex value and update color.
+    50 The scale value is passed automatically when the scale is moved calling the 
+    get_blue function."""
     global blue_value
+    #Turn the slider value into an int and hex value. Strip leading chars so only two remain
     blue_value = hex(int(slider_value))
     blue_value = blue_value.lstrip("0x")
     while len(blue_value) < 2:
@@ -41,20 +56,27 @@ def get_blue(slider_value):
     update_color()
 
 def update_color():
+    """UPdate the current color box based on the slider values. Display tuple and hex 
+    values of the current color"""
+    #Make the color box smaller than the original due to ipadx and ipday on the original color box
     color_box = tkinter.Label(input_frame, bg = "#" + red_value + green_value + blue_value, height=6, width=15)
     color_box.grid(row=1, column=3, columnspan=2, padx=35, pady=10)
+    #Display the tuple and hex value for the given color
 
     color_tuple.config(text = "(" + str(red_slider.get()) + ")" +"(" + str(green_slider.get()) + ")" + "(" + str(blue_slider.get())+ ")")
     color_hex.config(text = "#" + red_value + green_value + blue_value)
 
 def set_color(r,g,b):
+    """Set a given color"""
     red_slider.set(r)
     green_slider.set(g)
     blue_slider.set(b)
 
 
 def store_color():
+    """Store the current color tuple value and display color"""
     global stored_color
+    #Get the current value of each slider and append 0's to keep formatting
     red = str(red_slider.get())
     while len(red) < 3:
         red= "0" + red
@@ -66,31 +88,34 @@ def store_color():
     blue = str(blue_slider.get())
     while len(blue) < 3:
         blue= "0" + blue
-    
+    #Keep a reference of the current color
     stored_red = red_slider.get()
     stored_green = green_slider.get()
     stored_blue = blue_slider.get()
+    #Create new widgets for the stored color.
     recall_button = tkinter.Button(output_frame, text = "Recall color", command=lambda:set_color(stored_red, stored_green, stored_blue))
     new_color_tuple = tkinter.Label(output_frame, text = "(" + red + ")," +"(" + green + ")," + "(" + blue + ")")
     new_color_hex = tkinter.Label(output_frame, text = ("#" + red_value + green_value + blue_value))
     new_color_black_box = tkinter.Label (output_frame, bg = "black",width=3,height=1)
     new_color_box  = tkinter.Label(output_frame, bg = "#" + red_value + green_value + blue_value, width= 3, height= 1)
-
+    #Put new widgets on the screen
     recall_button.grid(row = stored_color.get(), column=1, padx=20)
     new_color_tuple.grid(row = stored_color.get(), column=2, padx=20)
     new_color_hex.grid(row = stored_color.get(), column=3, padx=20)
     new_color_black_box.grid(row = stored_color.get(), column=4, pady= 2,ipadx=5, ipady=5)
     new_color_box.grid(row = stored_color.get(), column=4, columnspan=4)
-
+    #Update the dict stored_colors with the new color tuple and hex values
     stored_colors[stored_color.get()] = [new_color_tuple.cget('text'), new_color_hex.cget("text")]
-
+    #Update the dict stored_colors with the new color tuple and hex values
     if stored_color.get() < 5:
         stored_color.set(stored_color.get()+1)
     
 
 def save_colors():
+    """Output the chosen colors to a txt file."""
+     #Get the directory where the user would like to save
     file_name = filedialog.asksaveasfilename(initialdir= "./", title = "Save Colors", filetypes= (('text', ".txt"),("All Files", '*.*')))
-
+    #open the new file as write
     with open(file_name, "w") as f:
         f.write("Color Theme Maker Output\n")
         for saved_entry in stored_colors.values():
